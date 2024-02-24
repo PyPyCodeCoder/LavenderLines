@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogDomain", "BlogDomain\BlogDomain.csproj", "{6A1006C8-6626-430C-9E63-99F726471496}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogInfrastructure", "BlogInfrastructure\BlogInfrastructure.csproj", "{BABA0D4D-DEF2-4838-BB9D-C4BE60615FAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A1006C8-6626-430C-9E63-99F726471496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A1006C8-6626-430C-9E63-99F726471496}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A1006C8-6626-430C-9E63-99F726471496}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A1006C8-6626-430C-9E63-99F726471496}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BABA0D4D-DEF2-4838-BB9D-C4BE60615FAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BABA0D4D-DEF2-4838-BB9D-C4BE60615FAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BABA0D4D-DEF2-4838-BB9D-C4BE60615FAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BABA0D4D-DEF2-4838-BB9D-C4BE60615FAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
