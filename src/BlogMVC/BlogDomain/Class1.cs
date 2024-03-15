@@ -1,5 +1,7 @@
-﻿namespace BlogDomain;
-
-public class Class1
+﻿namespace BlogDomain
 {
+    public class Class1
+    {
+
+    }
 }
