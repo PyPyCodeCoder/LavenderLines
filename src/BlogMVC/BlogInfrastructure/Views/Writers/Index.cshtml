@@ -1,0 +1,42 @@
+﻿@model IEnumerable<BlogDomain.Model.Writer>
+
+@{
+    ViewData["Title"] = "Автори";
+}
+
+<h1>Автори</h1>
+
+<p>
+    <a asp-action="Create">Додати нового автора</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Ім'я автора
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Username)
+        </td>
+        <td>
+            <div class="btn-group d-inline-block" role="group" aria-label="Button group with nested dropdown">
+                <button id="btnGroupDrop_@item.Id" type="button" class="btn btn-info dropdown-toggle text-center" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 0.5rem 1.2rem; font-size: 1rem;">
+                    Опції
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="btnGroupDrop_@item.Id" style="">
+                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                    <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Подробиці</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+}
+    </tbody>
+</table>

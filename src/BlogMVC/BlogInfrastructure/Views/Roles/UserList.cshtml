@@ -1,0 +1,14 @@
+﻿@model IEnumerable<BlogDomain.Model.User>
+
+<h2 style="margin-top: 20px;">Список користувачів</h2>
+<table class="table">
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>
+                <a class="btn btn-sm btn-primary" style="font-size: 15px;" asp-action="Edit" asp-route-userid="@user.Id">Права доступу</a>
+            </td>
+        </tr>
+    }
+</table>

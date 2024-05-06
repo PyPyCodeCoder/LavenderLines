@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using BlogDomain.Model;
 using Microsoft.EntityFrameworkCore;
 
-//namespace BlogDomain.Model;
 namespace BlogInfrastructure;
 
 public partial class LldbContext : DbContext
@@ -28,6 +27,8 @@ public partial class LldbContext : DbContext
     public virtual DbSet<Reader> Readers { get; set; }
 
     public virtual DbSet<Writer> Writers { get; set; }
+    
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -88,6 +89,11 @@ public partial class LldbContext : DbContext
             entity.ToTable("Reader");
 
             entity.Property(e => e.Username).HasMaxLength(50);
+            
+            entity.HasOne(d => d.User)
+                .WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Writer>(entity =>
@@ -95,6 +101,18 @@ public partial class LldbContext : DbContext
             entity.ToTable("Writer");
 
             entity.Property(e => e.Username).HasMaxLength(50);
+            
+            entity.HasOne(d => d.User)
+                .WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("User");
+            
+            entity.Property(e => e.Bio).HasMaxLength(255);
         });
 
         OnModelCreatingPartial(modelBuilder);

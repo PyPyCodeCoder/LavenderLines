@@ -1,0 +1,44 @@
+﻿<meta charset="UTF-8">
+<div style="text-align: center;">
+    @model BlogInfrastructure.ViewModel.RegisterViewModel
+    <h2>Реєстрація нового користувача</h2>
+    <div style="margin: 0 auto; width: 30%;">
+        <form method="post" asp-controller="Account" asp-action="Register">
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <div>
+                <label asp-for="Email" class="col-form-label mt-4" style="font-size: 15px;"></label>
+                <input asp-for="Email" type="text" class="form-control" style="width: 100%;">
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div>
+                <label asp-for="Username" class="col-form-label mt-4" style="font-size: 15px;"></label>
+                <input asp-for="Username" type="text" class="form-control" style="width: 100%;">
+                <span asp-validation-for="Username"></span>
+            </div>
+
+            <div>
+                <label asp-for="Bio" class="col-form-label mt-4" style="font-size: 15px;"></label>
+                <input asp-for="Bio" type="text" class="form-control" style="width: 100%;">
+                <span asp-validation-for="Bio"></span>
+            </div>
+
+            <div>
+                <label asp-for="Password" class="col-form-label mt-4" style="font-size: 15px;"></label>
+                <input asp-for="Password" type="password" class="form-control" style="width: 100%;">
+                <span asp-validation-for="Password"></span>
+            </div>
+
+            <div>
+                <label asp-for="PasswordConfirm" class="col-form-label mt-4" style="font-size: 15px;"></label>
+                <input asp-for="PasswordConfirm" type="password" class="form-control" style="width: 100%;">
+                <span asp-validation-for="PasswordConfirm"></span>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <input type="submit" class="btn btn-success" style="font-size: 15px;" value="Реєстрація" />
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+﻿@model BlogDomain.Model.Article
+
+@{
+    ViewData["Title"] = "Подробиці статті";
+}
+
+<h1>Подробиці статті</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Назва
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            Текст
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+        <dt class="col-sm-2">
+            Дата
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Data)
+        </dd>
+        <dt class="col-sm-2">
+            Статус
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class="col-sm-2">
+            Категорія
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Автор
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Writer.Username)
+        </dd>
+    </dl>
+</div>
+<div>
+    <form asp-action="Edit" asp-route-id="@Model?.Id" method="get">
+        <button type="submit" class="btn btn-primary">Редагувати</button>
+        <a asp-action="Index" asp-controller="Comments" asp-route-articleId="@ViewBag.Id" class="btn btn-primary">Проглянути коментарі</a>
+    </form>
+    <a asp-action="Index" asp-controller="Articles" asp-route-id="@ViewBag.CategoryId" asp-route-categoryName="@ViewBag.CategoryName">Повернутися до списку</a>
+</div>

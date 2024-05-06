@@ -1,0 +1,60 @@
+﻿@model IEnumerable<BlogDomain.Model.Comment>
+
+@{
+    ViewData["Title"] = "Коментарі за статтею";
+}
+
+<h1>Коментарі за статтею</h1>
+
+<p>
+    @Html.ActionLink("Додати новий коментар", "Create", new {articleId = ViewBag.Id})
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Текст
+            </th>
+            <th>
+                Дата
+            </th>
+            <th>
+                Статус
+            </th>
+            <th>
+                Автор
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Text)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Data)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reader.Username)
+            </td>
+            <td>
+                <div class="btn-group d-inline-block" role="group" aria-label="Button group with nested dropdown">
+                    <button id="btnGroupDrop_@item.Id" type="button" class="btn btn-info dropdown-toggle text-center" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 0.5rem 1.2rem; font-size: 1rem;">
+                        Опції
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="btnGroupDrop_@item.Id" style="">
+                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                        <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                        <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Подробиці</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

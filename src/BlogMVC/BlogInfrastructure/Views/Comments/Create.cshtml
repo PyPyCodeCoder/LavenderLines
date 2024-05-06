@@ -1,0 +1,49 @@
+﻿@model BlogDomain.Model.Comment
+
+@{
+    ViewData["Title"] = "Додати новий коментар";
+}
+
+<h1>Додати новий коментар</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                Текст
+                <textarea asp-for="Text" class="form-control" style="resize: vertical;"></textarea>
+                <span asp-validation-for="Text" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                Дата редагування
+                <input asp-for="Data" class="form-control" />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                Статус
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            
+            <input type="hidden" value="@ViewBag.ArticleId" name="articleId" />
+            
+            <div class="form-group">
+                Читач
+                <select asp-for="ReaderId" class ="form-control" asp-items="ViewBag.ReaderId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Додати" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Comments" asp-route-articleId="@ViewBag.Id">Повернутися до списку</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

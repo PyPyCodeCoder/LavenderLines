@@ -1,0 +1,74 @@
+﻿@using BlogDomain.Model
+@using BlogInfrastructure.Controllers
+@model IEnumerable<BlogDomain.Model.Article>
+
+@{
+    ViewData["Title"] = "Статті за категорією";
+}
+
+<h1>Статті категорії @ViewBag.Name</h1>
+
+@if (User.IsInRole("admin") || User.IsInRole("writer"))
+{
+    <p>
+        @Html.ActionLink("Додати нову статтю", "Create", new {id = ViewBag.Id})
+    </p>
+
+    <p>
+        <a class="btn btn-primary mb-3" type="=submit" asp-area="" asp-controller="Categories" asp-action="Export" asp-route-id="@ViewBag.Id">Експортувати у файл</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Назва
+        </th>
+        <th>
+            Текст
+        </th>
+        <th>
+            Дата
+        </th>
+        <th>
+            Статус
+        </th>
+        <th>
+            Автор
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Text)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Data)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Writer.Username)
+        </td>
+            <td>
+                <div class="btn-group d-inline-block" role="group" aria-label="Button group">
+                    @if (User.IsInRole("admin") || User.IsInRole("writer"))
+                    {
+                    <a class="btn btn-info btn-md text-center" asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                    <a class="btn btn-danger btn-md text-center" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
+                    <a class="btn btn-secondary btn-md text-center" asp-action="Details" asp-route-id="@item.Id">Коментарі</a>
+                </div>
+            </td>
+    </tr>
+    }
+    </tbody>
+</table>

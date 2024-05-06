@@ -1,35 +1,164 @@
 ﻿@model IEnumerable<BlogDomain.Model.Category>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Категорії";
 }
 
-<h1>Index</h1>
+<h1>Категорії</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.IsInRole("writer"))
+{
+    <p>
+        <a asp-action="Create">Додати нову категорію</a>
+    </p>
+}
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a class="btn btn-primary mb-3" type="=submit" asp-area="" asp-controller="Categories" asp-action="Import">Завантажити з файлу</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Назва
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Name)
+    </td>
+    <td>
+        <div class="btn-group d-inline-block" role="group" aria-label="Button group">
+            @if (User.IsInRole("admin") || User.IsInRole("writer"))
+            {
+            <a class="btn btn-info btn-md text-center" asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+            <a class="btn btn-danger btn-md text-center" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+            }
+            <a class="btn btn-secondary btn-md text-center" asp-action="Details" asp-route-id="@item.Id">Статті</a>
+        </div>
+    </td>
+</tr>
 }
     </tbody>
 </table>
+
+<div class="col-12">
+    <div id="countByYearChart"></div>
+</div>
+<div class="col-12">
+    <div id="countByCategoryChart"></div>
+</div>
+<div class="col-12">
+    <div style="height: 200px; overflow-y: auto; overflow-x: hidden;">
+        <div id="countByArticleChart"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    	google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+ 
+    	function drawCharts() {
+            //Для статей за роками
+        	fetch('/api/charts/countByYear')
+            	.then(response => response.json())
+            	.then(data => {
+                	const dataTable = new google.visualization.DataTable();
+                	dataTable.addColumn('string', 'Рік');
+                	dataTable.addColumn('number', 'Кількість статей');
+ 
+                	data.forEach(item => {
+                        dataTable.addRow([item.year, item.count]);
+           	        });
+ 
+                	const options = {
+                    	title: 'Статті за роками',
+                    	legend: { position: 'none' },
+                        vAxis: {
+                            format: '0',
+                            gridlines: { count: -1 },
+                            gridlineColor: '#adb6d3',
+                        },
+                        backgroundColor: '#d9e3f1',
+                        colors: ['#7b8ab8'],
+                        fontName: 'Nunito',
+                	};
+ 
+                	const chart = new google.visualization.AreaChart(document.getElementById('countByYearChart'));
+ 
+                	chart.draw(dataTable, options);
+            	});
+
+            // Для статей за категоріями
+            fetch('/api/charts/countByCategory')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Категорія');
+                    dataTable.addColumn('number', 'Кількість статей');
+
+                    data.forEach(item => {
+                        dataTable.addRow([item.category, item.count]);
+                    });
+
+                    const options = {
+                        title: 'Статті за категоріями',
+                        legend: { position: 'none' },
+                        vAxis: {
+                            format: '0',
+                            gridlines: { count: -1 },
+                            gridlineColor: '#adb6d3',
+                        },
+                        backgroundColor: '#d9e3f1',
+                        colors: ['#7b8ab8'],
+                        fontName: 'Nunito',
+                    };
+
+                    const chart = new google.visualization.ColumnChart(document.getElementById('countByCategoryChart'));
+
+                    chart.draw(dataTable, options);
+                });
+
+            //Для коментарів за статтями
+            fetch('/api/charts/countCommentsByArticle')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'ID статті');
+                    dataTable.addColumn('number', 'Кількість коментарів');
+
+                    data.forEach(item => {
+                        dataTable.addRow([item.articleId, item.count]);
+                    });
+
+                    const options = {
+                        title: 'Коментарі за статтями',
+                        height: 400,
+                        legend: { position: 'none' },
+                        hAxis: {
+                            format: '0',
+                            gridlines: { count: -1 },
+                            gridlineColor: '#adb6d3',
+                        },
+                        backgroundColor: '#d9e3f1',
+                        colors: ['#7b8ab8'],
+                        fontName: 'Nunito',
+                    };
+
+                    const chart = new google.visualization.BarChart(document.getElementById('countByArticleChart'));
+
+                    chart.draw(dataTable, options);
+                }); 
+    	}
+	</script>
+}

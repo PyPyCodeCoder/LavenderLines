@@ -5,6 +5,8 @@ namespace BlogDomain.Model;
 
 public partial class Article : Entity
 {
+    public string Title { get; set; }
+    
     public string? Text { get; set; }
 
     public DateTime Data { get; set; }

@@ -1,0 +1,26 @@
+﻿<div style="text-align: center;">
+    @model BlogInfrastructure.ViewModel.LoginViewModel
+    <h2 style="margin-top: 20px;">Вхід в Lavender Lines</h2>
+    <div style="margin: 0 auto; width: 30%;">
+        <form method="post" asp-controller="Account" asp-action="Login"
+              asp-route-returnUrl="@Model.ReturnUrl">
+            <div asp-validation-summary="ModelOnly"></div>
+            
+            <div>
+                <label asp-for="UserName" class="col-form-label mt-4" style="font-size: 20px;"></label>
+                <input asp-for="UserName" type="text" class="form-control" style="width: 100%;">
+                <span asp-validation-for="UserName"></span>
+            </div>
+
+            <div>
+                <label asp-for="Password" class="col-form-label mt-4" style="font-size: 20px;"></label>
+                <input asp-for="Password" type="password" class="form-control" style="width: 100%;">
+                <span asp-validation-for="Password"></span>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <input type="submit" class="btn btn-success" style="font-size: 20px;" value="Увійти" />
+            </div>
+        </form>
+    </div>
+</div>

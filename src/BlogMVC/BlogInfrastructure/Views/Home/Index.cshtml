@@ -1,8 +1,74 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.Security.Claims
+@{
+    ViewData["Title"] = "Lavender Lines";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row">
+        <div class="text-center mt-4">
+            <h1>Ласкаво просимо до Lavender Lines</h1>
+            <p>Це платформа, де ви можете читати різноманітні статті та оповідання на різні теми.</p>
+        </div>
+    </div>
 </div>
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="text-center mt-4">
+        <h3>Новенький?</h3>
+        <p>Не зволікай та переходь по посиланню внизу!</p>
+        
+        <form method="get" asp-controller="Account" asp-action="Register">
+            <button type="submit" class="btn btn-primary">Реєстрація</button>
+        </form>
+    </div>
+}
+else
+{
+    if (User.IsInRole("admin"))
+    {
+        <div class="text-center mt-4">
+            <h3>Панель адміна</h3>
+            <p>Посилання нижче працюють лише для адміністраторів.</p>
+            
+            <form method="get" asp-controller="Roles" asp-action="UserList">
+                <button type="submit" class="btn btn-primary">Список користувачів</button>
+            </form>
+            
+        </div>
+    }
+    if (User.IsInRole("writer"))
+    {
+        <div class="text-center mt-4">
+            <h3>Панель автора</h3>
+            <p>Посилання нижче працюють для адміна та автора.</p>
+            
+            
+        </div>
+    }
+    if (User.IsInRole("reader"))
+    {
+        <div class="text-center mt-4">
+            <h3>Панель читача</h3>
+            <p>Посилання нижче працюють для адміна, автора та читача.</p>
+    
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <form method="get" asp-area="" asp-controller="Categories" asp-action="Index">
+                        <button type="submit" class="btn btn-primary">Категорії</button>
+                    </form>
+                </div>
+        
+                @if (!User.IsInRole("writer"))
+                {
+                    <div class="col-auto">
+                        <form method="post" asp-controller="Roles" asp-action="PromotionToWriter">
+                            <input type="hidden" name="userId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+                            <button type="submit" class="btn btn-success">Стати автором</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+
+    }
+}

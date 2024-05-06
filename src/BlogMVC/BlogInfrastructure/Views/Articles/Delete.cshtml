@@ -1,0 +1,59 @@
+﻿@model BlogDomain.Model.Article
+
+@{
+    ViewData["Title"] = "Видалення статті";
+}
+
+<h1>Видалення статті</h1>
+
+<h3>Ви впевнені що хочете видалити цю статтю?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Назва
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            Текст
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+        <dt class="col-sm-2">
+            Дата
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Data)
+        </dd>
+        <dt class="col-sm-2">
+            Статус
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class="col-sm-2">
+            Категорія
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Автор
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Writer.Username)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Видалити" class="btn btn-danger" />
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Articles" asp-route-id="@ViewBag.CategoryId" asp-route-categoryName="@ViewBag.CategoryName">Повернутися до списку</a>
+</div>
