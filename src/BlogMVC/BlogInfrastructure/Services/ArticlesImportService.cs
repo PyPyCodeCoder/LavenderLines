@@ -12,6 +12,17 @@ namespace BlogInfrastructure.Services
         {
             _context = context;
         }
+        
+        private static readonly IReadOnlyList<string> HeaderNames =
+            new string[]
+            {
+                "Назва",
+                "Текст",
+                "Дата",
+                "Статус",
+                "Категорія",
+                "Автор",
+            };
 
         public async Task ImportFromStreamAsync(Stream stream, CancellationToken cancellationToken)
         {
@@ -19,42 +30,88 @@ namespace BlogInfrastructure.Services
             {
                 throw new ArgumentException("Дані не можуть бути прочитані", nameof(stream));
             }
-
-            using (XLWorkbook workBook = new XLWorkbook(stream))
+            
+            try
             {
-                foreach (IXLWorksheet worksheet in workBook.Worksheets)
+                using (XLWorkbook workBook = new XLWorkbook(stream))
                 {
-                    foreach (var row in worksheet.RowsUsed().Skip(1))
+                    foreach (IXLWorksheet worksheet in workBook.Worksheets)
                     {
-                        var category_name = row.Cell(5).Value.ToString() ?? String.Empty;
-                        Category category = await _context.Categories
-                            .FirstOrDefaultAsync(cat => cat.Name == category_name, cancellationToken);
-                        if (category == null)
-                        {
-                            category = new Category();
-                            category.Name = category_name;
-                            _context.Categories.Add(category);
-                        }
                         
-                        await AddArticleAsync(row, cancellationToken, category);
+                        CheckHeaders(worksheet);
+                        
+                        foreach (var row in worksheet.RowsUsed().Skip(1))
+                        {
+                            var category_name = row.Cell(5).Value.ToString();
+                            if (String.IsNullOrEmpty(category_name))
+                            {
+                                throw new Exception("Категорія не може бути пустою");
+                            }
+                            
+                            Category category = await _context.Categories
+                                .FirstOrDefaultAsync(cat => cat.Name == category_name, cancellationToken);
+                            
+                            if (category == null)
+                            {
+                                category = new Category();
+                                category.Name = category_name;
+                                _context.Categories.Add(category);
+                            }
+                            
+                            await AddArticleAsync(row, cancellationToken, category);
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
                     }
                 }
+                
             }
-            await _context.SaveChangesAsync(cancellationToken);
+            catch (Exception ex)
+            {
+                throw new Exception($"Помилка імпорту: {ex.Message}");
+            }
         }
+        
+        private void CheckHeaders(IXLWorksheet worksheet)
+        {
+            var headers = worksheet.Row(1).Cells().Select(cell => cell.Value.ToString()).ToList();
 
+            for (int i = 0; i < HeaderNames.Count; i++)
+            {
+                if (i >= headers.Count || HeaderNames[i] != headers[i])
+                {
+                    throw new Exception($"Не вдалося знайти на потрібній позиції заголовок '{HeaderNames[i]}' в Excel файлі.");
+                }
+            }
+        }
+        
         private async Task AddArticleAsync(IXLRow row, CancellationToken cancellationToken, Category category)
         {
-            Article article = new Article();
-            
-            article.Title = GetArticleTitle(row);
-            article.Text = GetArticleText(row);
-            article.Data = GetArticleData(row);
-            article.Status = GetArticleStatus(row);
-            article.Category = category;
-            article.Writer = await GetOrCreateArticleWriterAsync(row, cancellationToken);
+            string title = GetArticleTitle(row);
+            string text = GetArticleText(row);
+            string writerUsername = row.Cell(6).Value.ToString();
 
-            _context.Articles.Add(article);
+            if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(text) || string.IsNullOrEmpty(writerUsername))
+            {
+                throw new Exception("Усі поля повинні бути заповнені");
+            }
+            
+            try
+            {
+                Article article = new Article();
+
+                article.Title = GetArticleTitle(row);
+                article.Text = GetArticleText(row);
+                article.Data = GetArticleData(row);
+                article.Status = GetArticleStatus(row);
+                article.Category = category;
+                article.Writer = await GetOrCreateArticleWriterAsync(row, cancellationToken);
+
+                _context.Articles.Add(article);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Помилка додавання статті: {ex.Message}");
+            }
         }
         
         private static string GetArticleTitle(IXLRow row)
@@ -84,11 +141,15 @@ namespace BlogInfrastructure.Services
             var writer_username = row.Cell(6).Value.ToString();
 
             Writer writer = await _context.Writers.FirstOrDefaultAsync(wr => wr.Username == writer_username, cancellationToken);
-            if (writer is null)
+            if (writer is null) //we'll use admin's user for that
             {
+                var admin = _context.Writers
+                    .Include(w => w.User)
+                    .FirstOrDefault(w => w.Username == "Toretto");
+                
                 writer = new Writer();
                 writer.Username = writer_username;
-                writer.UserId = "142a9e91-995c-43b9-a5e4-3dbfd8851662";//adjust correctly
+                writer.UserId = admin.UserId;
                 
                 _context.Writers.Add(writer);
             }

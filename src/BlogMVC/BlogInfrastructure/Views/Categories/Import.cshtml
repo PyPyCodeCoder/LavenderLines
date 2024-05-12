@@ -4,18 +4,39 @@
     ViewData["Title"] = "Імпорт статей";
 }
 
-<h1>Імпорт статей</h1>
+<h1 class="text-center">Імпорт статей</h1>
 
-<div>
+<div class="text-center">
     <h3>Оберіть excel-файл для завантаження</h3>
     @using (Html.BeginForm("Import", "Categories", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
     {
-        <div>
-            Завантажте Excel-файл:
-            <input type="file" name="fileExcel" id="fileExcel" />
-            <div>
-                <input type="submit" value="Завантажити" />
-            </div>
+    <div class="row justify-content-center col-md-12">
+        <label for="formFile" class="form-label mt-4">Завантажте Excel-файл:</label>
+        <input class="form-control" style="width: 50%;" type="file" name="fileExcel" id="fileExcel" accept=".xlsx">
+        <div style="margin-top: 15px;">
+            <input type="submit" class="btn btn-success" style="font-size: 15px;" value="Завантажити" onclick="return validateForm()" />
+            <span id="fileError" style="color: red; display: none;">Будь ласка, оберіть файл у форматі .xlsx.</span>
+        </div>
+    </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3">
+            @TempData["ErrorMessage"]
         </div>
     }
 </div>
+
+<script>
+    function validateForm() {
+        var fileInput = document.getElementById('fileExcel');
+        var fileError = document.getElementById('fileError');
+        var allowedExtensions = /(\.xlsx)$/i;
+        if (!allowedExtensions.exec(fileInput.value)) {
+            fileError.style.display = 'block';
+            return false;
+        }
+        return true;
+    }
+</script>

@@ -193,14 +193,22 @@ namespace BlogInfrastructure.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Import(IFormFile fileExcel, CancellationToken cancellationToken = default)
-        {                                 
-            var importService = _articlesDataPortServiceFactory.GetImportService(fileExcel.ContentType);
+        {
+            try
+            {
+                var importService = _articlesDataPortServiceFactory.GetImportService(fileExcel.ContentType);
 
-            using var stream = fileExcel.OpenReadStream();
+                using var stream = fileExcel.OpenReadStream();
             
-            await importService.ImportFromStreamAsync(stream, cancellationToken);
+                await importService.ImportFromStreamAsync(stream, cancellationToken);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }
         }
         
         [Authorize(Roles = "writer")]

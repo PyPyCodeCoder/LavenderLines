@@ -141,14 +141,22 @@ namespace BlogInfrastructure.Controllers
                 }
                 else
                 {
-                    foreach (var error in changePasswordResult.Errors)
+                    if (changePasswordResult.Errors.Any(e => e.Code == "PasswordMismatch"))
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        ModelState.AddModelError(string.Empty, "Старий пароль не підтверджено. Зміни не збережені.");
+                    }
+                    else
+                    {
+                        foreach (var error in changePasswordResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
                     }
                 }
             }
-            
+    
             return View(model);
         }
+
     }
 }
